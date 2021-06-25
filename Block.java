@@ -12,7 +12,7 @@ public class Block {
     Object[] variableNames;
     String[] unParsedCode;
     boolean finished;
-    protected int startFrom = 0;
+    protected static int startFrom = 0;
     int quanta;
 
     public Block(PCB pcb) throws IOException {
@@ -39,7 +39,7 @@ public class Block {
         variableNames = new Object[vars.size()];
 
         pcb.boundaries[0] = startFrom;
-        pcb.boundaries[1] = startFrom += vars.size() + unParsedCode.length + 4;
+        pcb.boundaries[1] = startFrom += 4 + unParsedCode.length + vars.size();
         startFrom++;
 
     }

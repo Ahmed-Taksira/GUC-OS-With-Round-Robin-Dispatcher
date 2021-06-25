@@ -7,6 +7,7 @@ public class Main {
     public Main() throws IOException {
 		memory = new Memory();
     }
+	// In our implementation, we assumed that the order in the memory is always PCB->lines of code->variables.
 
     public void scheduler() throws IOException {
     	int time = 0;
@@ -17,14 +18,18 @@ public class Main {
 					System.out.println("Time: " + time);
 					String s = memory.memoryBlocks[i].unParsedCode[memory.memoryBlocks[i].pcb.programCounter];
 					System.out.println("Process " + memory.memoryBlocks[i].pcb.processID + ": " + s);
+					System.out.println("State: "+memory.memoryBlocks[i].pcb.processState);
+					System.out.println("Process Index in Memory: "+(memory.memoryBlocks[i].pcb.boundaries[0] + memory.memoryBlocks[i].pcb.programCounter + 4));
+					System.out.println("Program Counter: "+(memory.memoryBlocks[i].pcb.programCounter+1));
 					parser(s, memory.memoryBlocks[i]);
 					time++;
 					memory.memoryBlocks[i].pcb.programCounter++;
+
 					if(memory.memoryBlocks[i].pcb.programCounter == memory.memoryBlocks[i].unParsedCode.length) {
 						memory.memoryBlocks[i].finished = true;
 						processesFinished++;
 						memory.memoryBlocks[i].quanta++;
-						System.out.println("Process " + memory.memoryBlocks[i].pcb.processID + "has finished in " + memory.memoryBlocks[i].quanta+" quanta.");
+						System.out.println("Process " + memory.memoryBlocks[i].pcb.processID + " has finished in " + memory.memoryBlocks[i].quanta+" quanta.");
 						System.out.println("--------------------------------------");
 						break;
 					}
@@ -44,7 +49,7 @@ public class Main {
 
 	public void print(String var, Block block){
 		if(includes(block.variableNames, var))
-			System.out.println(block.variables[getIndex(block.variableNames, var)]);
+			System.out.println(block.variableNames[getIndex(block.variableNames, var)]+" = "+block.variables[getIndex(block.variableNames, var)]);
 		else
 			System.out.println(var);
 	}
