@@ -7,7 +7,6 @@ public class Main {
     public Main() throws IOException {
 		memory = new Memory();
     }
-	// In our implementation, we assumed that the order in the memory is always PCB->lines of code->variables.
 
     public void scheduler() throws IOException {
     	int time = 0;
@@ -19,7 +18,7 @@ public class Main {
 					String s = memory.memoryBlocks[i].unParsedCode[memory.memoryBlocks[i].pcb.programCounter];
 					System.out.println("Process " + memory.memoryBlocks[i].pcb.processID + ": " + s);
 					System.out.println("State: "+memory.memoryBlocks[i].pcb.processState);
-					System.out.println("Process Index in Memory: "+(memory.memoryBlocks[i].pcb.boundaries[0] + memory.memoryBlocks[i].pcb.programCounter + 4));
+					System.out.println("Instruction Index in Memory: "+(memory.memoryBlocks[i].pcb.boundaries[0] + memory.memoryBlocks[i].pcb.programCounter + 4));
 					System.out.println("Program Counter: "+(memory.memoryBlocks[i].pcb.programCounter+1));
 					parser(s, memory.memoryBlocks[i]);
 					time++;
@@ -86,12 +85,15 @@ public class Main {
 		if(includes(block.variableNames, var)){
 			int i = getIndex(block.variableNames, var);
 			block.variables[i] = data;
+			System.out.println("Variable " + block.variableNames[i] + " is assigned "+ data +" in Memory index "+(i+4+block.unParsedCode.length+block.tempStartFrom));
 		}
 		else {
 			for(int i = 0; i<block.variables.length; i++){
 				if(block.variables[i] == null){
 					block.variableNames[i] = var;
 					block.variables[i] = data;
+					System.out.println("Variable " + block.variableNames[i] + " is assigned "+ data +" in Memory index "+(i+4+block.unParsedCode.length+block.tempStartFrom));
+
 					break;
 				}
 			}
@@ -113,8 +115,10 @@ public class Main {
 	}
 
 	public void add(String var1, String var2, Block block){
-		if(includes(block.variableNames, var1) && includes(block.variableNames, var2))
+		if(includes(block.variableNames, var1) && includes(block.variableNames, var2)) {
 			block.variables[getIndex(block.variableNames, var1)] = (int) block.variables[getIndex(block.variableNames, var1)] + (int) block.variables[getIndex(block.variableNames, var2)];
+			System.out.println("Variable " + block.variableNames[getIndex(block.variableNames, var1)] + " is assigned " + block.variables[getIndex(block.variableNames, var1)] + " in Memory index " + (getIndex(block.variableNames, var1) + 4 + block.unParsedCode.length + block.tempStartFrom));
+		}
 	}
 
 	public void parser(String instruction, Block block) throws IOException {
@@ -167,6 +171,15 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Main main = new Main();
 		main.scheduler();
+
+		// In our implementation, we assumed that the order in the memory is always PCB->lines of code->variables. You can run the following printings to check the indices.
+
+
+//		for(Block b : main.memory.memoryBlocks) {
+//			for (int i = 0; i < b.variables.length; i++)
+//				System.out.println("Variable " + b.variableNames[i] + " in Program " + b.pcb.processID + " in Index " + (i + 4 + b.unParsedCode.length + b.pcb.boundaries[0]));
+//			System.out.println("Program " + b.pcb.processID + " starts from "+b.pcb.boundaries[0] + " ends with "+ b.pcb.boundaries[1]);
+//		}
 	}
 
 
