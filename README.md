@@ -1,0 +1,1 @@
+Every operating system has a dispatcher that starts, ends, pre-empts, or blocks processes at respective times depending on its algorithm. In this project, we implemented the Round-Robin Algorithm, which could also be called the Time-Slice Algorithm.
